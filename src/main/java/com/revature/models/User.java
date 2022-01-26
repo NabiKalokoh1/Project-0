@@ -1,6 +1,5 @@
 package com.revature.models;
 
-import com.revature.models.Type;
 
 public class User {
     private String firstName;
@@ -11,9 +10,6 @@ public class User {
     private double checking = 0.0;
     private double savings = 0.0;
     private Type type;
-    //will have stuff for deposit checking and savings and stuff
-    //wont need to be inputted when constructed
-    //account view and all account access can be inherited
 
     public User() {
     }
@@ -28,35 +24,74 @@ public class User {
     }
 
     //will probably move these somewhere else
-    public void deposit(){
+    public void deposit(User user, int amount, int balance){
         //input where to deposit and how much
         //must be User
-        //can't be a negative number
+        //can't be a negative number (validation should be done before entering the method for all cases, yeah?
         //have a validation message
+        if (balance == 1){
+            user.checking += amount;
+            System.out.println("You have deposited $" + amount + " into your checking account.");
+        }
+        if (balance == 2){
+            user.savings += amount;
+            System.out.println("You have deposited $" + amount + " into your savings account.");
+        }
+
 
     }
 
-    public void withdrawl(){
+    public void withdrawl(User user, int amount, int balance){
         //input where to withdraw and how much
         //must be User
         //can't be a negative number
         //can't take more than what's available
         //have a validation message
-
+        if (balance == 1){
+            if (user.checking < amount){
+                System.out.println("You don't have enough money in this account.");
+                return;
+            }
+            user.checking -= amount;
+            System.out.println("You have withdrawn $" + amount + " from your checking account.");
+        }
+        if (balance == 2){
+            if (user.savings < amount){
+                System.out.println("You don't have enough money in this account.");
+                return;
+            }
+            user.savings -= amount;
+            System.out.println("You have withdrawn $" + amount + " from your savings account.");
+        }
     }
 
-    public void transfer(){
+    public void transfer(User user, int amount, int order){
         //input both checking and savings, a flag for which to take/give to, and how much
         //must be user
         //can't be a negative number
         //can't take more than what's available
         //have a validation message
+        if (order == 1){
+            //checking to savings
+            user.withdrawl(user, amount, 1);
+            user.deposit(user, amount, 2);
+        }
+
+        if (order == 2){
+            //savings to checking
+            user.withdrawl(user, amount, 2);
+            user.deposit(user, amount, 1);
+        }
     }
 
-    public void viewAccount(){
-        //must be an employee or admin
-        //input could be via username?
-        //prints out everything in the User class
+    public String accountInfo(User user){
+        return "Account Information\n" +
+                user.firstName + " " + user.lastName + "\n" +
+                "E-mail: " + user.email + "\n" +
+                "Username: " + user.username + "\n" +
+                "Password: " + user.password + "\n" +
+                "Checking Balance: " + user.checking + "\n" +
+                "Savings Balance: " + user.savings;
     }
 
     //should i made admin versions of deposit and what not?
