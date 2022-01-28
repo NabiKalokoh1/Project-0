@@ -2,6 +2,8 @@ package com.revature.models;
 
 
 public class User {
+    private int userId;
+    private Type type;
     private String firstName;
     private String lastName;
     private String email;
@@ -9,22 +11,31 @@ public class User {
     private String password;
     private double checking = 0.0;
     private double savings = 0.0;
-    private Type type;
 
     public User() {
     }
 
-    public User(String firstName, String lastName, String email, String username, String password, Type type) {
+    public User(Type type, String firstName, String lastName, String email, String username, String password) {
+        this.type = type;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.username = username;
         this.password = password;
+    }
+
+    public User(int userID, Type type, String firstName, String lastName, String email, String username, String password) {
+        this.userId = userID;
         this.type = type;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.username = username;
+        this.password = password;
     }
 
     //will probably move these somewhere else
-    public void deposit(User user, int amount, int balance){
+    public double deposit(User user, double amount, int balance){
         //input where to deposit and how much
         //must be User
         //can't be a negative number (validation should be done before entering the method for all cases, yeah?
@@ -38,10 +49,12 @@ public class User {
             System.out.println("You have deposited $" + amount + " into your savings account.");
         }
 
+        return user.checking;
+
 
     }
 
-    public void withdrawl(User user, int amount, int balance){
+    public double withdraw(User user, double amount, int balance){
         //input where to withdraw and how much
         //must be User
         //can't be a negative number
@@ -50,7 +63,7 @@ public class User {
         if (balance == 1){
             if (user.checking < amount){
                 System.out.println("You don't have enough money in this account.");
-                return;
+                return user.checking;
             }
             user.checking -= amount;
             System.out.println("You have withdrawn $" + amount + " from your checking account.");
@@ -58,35 +71,37 @@ public class User {
         if (balance == 2){
             if (user.savings < amount){
                 System.out.println("You don't have enough money in this account.");
-                return;
+                return user.savings;
             }
             user.savings -= amount;
             System.out.println("You have withdrawn $" + amount + " from your savings account.");
         }
+
+        return user.savings;
     }
 
     public void transfer(User user, int amount, int order){
         //input both checking and savings, a flag for which to take/give to, and how much
-        //must be user
+        //must be user or admin
         //can't be a negative number
         //can't take more than what's available
         //have a validation message
         if (order == 1){
             //checking to savings
-            user.withdrawl(user, amount, 1);
+            user.withdraw(user, amount, 1);
             user.deposit(user, amount, 2);
         }
 
         if (order == 2){
             //savings to checking
-            user.withdrawl(user, amount, 2);
+            user.withdraw(user, amount, 2);
             user.deposit(user, amount, 1);
         }
     }
 
     public String accountInfo(User user){
         return "Account Information\n" +
-                user.firstName + " " + user.lastName + "\n" +
+                "Full Name: " + user.firstName + " " + user.lastName + "\n" +
                 "E-mail: " + user.email + "\n" +
                 "Username: " + user.username + "\n" +
                 "Password: " + user.password + "\n" +
