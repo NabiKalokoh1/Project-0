@@ -1,5 +1,9 @@
 package com.revature;
 
+
+import com.revature.controllers.UserController;
+import io.javalin.Javalin;
+import io.javalin.http.Context;
 import com.revature.models.User;
 import com.revature.models.Type;
 import com.revature.daos.UserDao;
@@ -8,6 +12,10 @@ import com.revature.services.UserService;
 
 public class BankDriver {
     public static void main(String[] args){
+
+        JavalinApplication app = new JavalinApplication();
+        app.start(8080);
+
         //so would i create a table first?
         //welcome to Bank, what would you like to do? (1. Register; 2. Log in)
         //(If 1) ask the user to put in their full name, email, type of user, create a username + password then have them sign back in
@@ -23,7 +31,7 @@ public class BankDriver {
         //log out will just end
 
 
-        UserService userService = new UserService();
-        userService.createUser(Type.CONSUMER, "Nabiatu", "Kalokoh", "nabik@gmail.com", "Lix", "genshin");
+        //UserService userService = new UserService();
+        //userService.createUser(Type.CONSUMER, "Nabiatu", "Kalokoh", "nabik@gmail.com", "Lix");
     }
 }

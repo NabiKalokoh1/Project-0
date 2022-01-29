@@ -7,7 +7,6 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
-    private String username;
     private String password;
     private double checking = 0.0;
     private double savings = 0.0;
@@ -15,22 +14,20 @@ public class User {
     public User() {
     }
 
-    public User(Type type, String firstName, String lastName, String email, String username, String password) {
+    public User(Type type, String firstName, String lastName, String email, String password) {
         this.type = type;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.username = username;
         this.password = password;
     }
 
-    public User(int userID, Type type, String firstName, String lastName, String email, String username, String password) {
-        this.userId = userID;
+    public User(int userId, Type type, String firstName, String lastName, String email, String password) {
+        this.userId = userId;
         this.type = type;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.username = username;
         this.password = password;
     }
 
@@ -103,14 +100,10 @@ public class User {
         return "Account Information\n" +
                 "Full Name: " + user.firstName + " " + user.lastName + "\n" +
                 "E-mail: " + user.email + "\n" +
-                "Username: " + user.username + "\n" +
                 "Password: " + user.password + "\n" +
                 "Checking Balance: " + user.checking + "\n" +
                 "Savings Balance: " + user.savings;
     }
-
-    //should i made admin versions of deposit and what not?
-    //i dont think so?
 
     //getters and setters
     public String getFirstName() {
@@ -135,14 +128,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setGender(String username) {
-        this.username = username;
     }
 
     public String getPassword() {
@@ -175,5 +160,13 @@ public class User {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }

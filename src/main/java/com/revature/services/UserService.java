@@ -11,9 +11,18 @@ public class UserService {
     //crud stuff?
     private UserDao userDao = new UserDaoImpli();
 
-    public boolean createUser(Type type, String firstName, String lastName, String email, String username, String password){
+    public boolean createUser(Type type, String firstName, String lastName, String email, String password){
         email = email.toLowerCase();
-        User user = new User(type, firstName, lastName, email, username, password);
+        User user = new User(type, firstName, lastName, email, password);
         return userDao.createUser(user);
+    }
+
+    public boolean createUser(User user){
+        user.setEmail(user.getEmail().toLowerCase());
+        return userDao.createUser(user);
+    }
+
+    public User getByUserAndPass(String email, String pass){
+        return userDao.getByUserAndPass(email, pass);
     }
 }
