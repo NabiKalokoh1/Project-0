@@ -18,6 +18,7 @@ public class AuthController {
         if (user == null){
             throw new UnauthorizedResponse("Incorrect Credentials");
         } else{
+            //for the enums
             String token = user.getType() + "-TOKEN";
             ctx.header("Authorization", token);
             ctx.status(200);
@@ -25,6 +26,7 @@ public class AuthController {
     }
 
     //checks for specific token (might have to make two more for employee and admin)
+    //come back to this since i might need to flip the lines
     public void authorizeUser(Context ctx){
         String authHeader = ctx.header("Authorization");
         if (authHeader != null){

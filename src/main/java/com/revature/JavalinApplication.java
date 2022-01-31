@@ -10,10 +10,10 @@ import static io.javalin.apibuilder.ApiBuilder.*;
 
 public class JavalinApplication {
 
-    private UserController userController = new UserController();
-    private LoggingUtil loggingUtil = new LoggingUtil();
-    private AppExceptionHandler appExceptionHandler = new AppExceptionHandler();
-    private AuthController authController = new AuthController();
+    private final UserController userController = new UserController();
+    private final LoggingUtil loggingUtil = new LoggingUtil();
+    private final AppExceptionHandler appExceptionHandler = new AppExceptionHandler();
+    private final AuthController authController = new AuthController();
 
     private Javalin app = Javalin.create().routes(()->{
         path("user",()->{
@@ -23,6 +23,7 @@ public class JavalinApplication {
         path("login", ()->{
             post(authController::authenticate);
         });
+        //before("*", loggingUtil::logRequest);
     }).exception(NumberFormatException.class, appExceptionHandler::handleNumberFormatException);
 
     public void start(int port){
