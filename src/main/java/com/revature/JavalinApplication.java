@@ -18,6 +18,27 @@ public class JavalinApplication {
     private Javalin app = Javalin.create().routes(()->{
         path("user",()->{
             post(userController::handleCreateUser);
+            get(userController::handleAllUsers);
+            delete(userController::handleDeleteUser);
+            path("{id}", ()->{
+                get(userController::handleOneUser);
+                put(userController::handleUpdateUser);
+                path("deposit", ()->{
+                    path("{account}", ()->{
+                        put(userController::handleDeposit);
+                    });
+                });
+                path("withdraw", ()->{
+                    path("{account}", ()->{
+                        put(userController::handleWithdraw);
+                    });
+                });
+                path("transfer", ()->{
+                    path("{account}", ()->{
+                        put(userController::handleTransfer);
+                    });
+                });
+            });
         });
 
         path("login", ()->{

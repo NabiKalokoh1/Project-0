@@ -52,4 +52,30 @@ public class UserController {
         //only Admins can do this
         ctx.status(404);
     }
+
+    //handle deposit, withdrawl, transfer still
+    public boolean handleDeposit(Context ctx){
+        String idPara = ctx.pathParam("id");
+        int id = Integer.parseInt(idPara);
+        User user = ctx.bodyAsClass(User.class);
+        user.setUserId(id);
+        String accountPara = ctx.pathParam("account");
+        int account = Integer.parseInt(accountPara);
+        boolean success = userService.deposit(user, account);
+
+        if (success){
+            ctx.status(201);
+        } else{
+            ctx.status(400);
+        }
+        return false;
+    }
+
+    public boolean handleWithdraw(Context ctx){
+        return false;
+    }
+
+    public boolean handleTransfer(Context ctx){
+        return false;
+    }
 }

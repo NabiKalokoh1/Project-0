@@ -9,7 +9,7 @@ import java.util.List;
 
 public class UserDaoImpli implements UserDao {
     public boolean createUser(User user){
-        String sql = "insert into user (type, firstName, lastName, email, password) values (?, ?, ?, ?, ?)";
+        String sql = "insert into users (type, firstName, lastName, email, password) values (?, ?, ?, ?, ?)";
 
         try(Connection c = ConnectionUtil.getConnection();
             PreparedStatement ps = c.prepareStatement(sql);){
@@ -19,6 +19,7 @@ public class UserDaoImpli implements UserDao {
             ps.setString(3, user.getLastName());
             ps.setString(4, user.getEmail());
             ps.setString(5, user.getPassword());
+
 
             int rowsAffected = ps.executeUpdate();
             if (rowsAffected == 1){
@@ -30,17 +31,19 @@ public class UserDaoImpli implements UserDao {
         return false;
     }
 
-    public boolean deposit(User user, int amount, int account){
-        //update user set account type where account type = ?
+    public boolean deposit(User user, int account){
         if(account == 1) {
-            String sql = "update user set checking = ?";
+            String sql = "update users set checking = ?";
             try(Connection c = ConnectionUtil.getConnection();
                 PreparedStatement ps = c.prepareStatement(sql);){
 
-                user.setChecking(user.deposit(user, amount, account));
+                System.out.println(user.getChecking());
+                user.setChecking(user.deposit(user, user.getChecking(), account));
+                System.out.println(user.getChecking());
                 ps.setDouble(1, user.getChecking());
 
                 int rowsAffected = ps.executeUpdate();
+
                 if (rowsAffected == 1){
                     return true;
                 }
@@ -49,11 +52,11 @@ public class UserDaoImpli implements UserDao {
             }
             return false;
         }else if (account == 2){
-            String sql = "update user set savings = ?";
+            String sql = "update users set savings = ?";
             try(Connection c = ConnectionUtil.getConnection();
                 PreparedStatement ps = c.prepareStatement(sql);){
 
-                user.setChecking(user.deposit(user, amount, account));
+               // user.setChecking(user.deposit(user, account));
                 ps.setDouble(1, user.getSavings());
 
                 int rowsAffected = ps.executeUpdate();
@@ -75,7 +78,7 @@ public class UserDaoImpli implements UserDao {
             if (amount < 0 || amount > user.getChecking()){
                 return false;
             }
-            String sql = "update user set checking = ?";
+            String sql = "update users set checking = ?";
             try(Connection c = ConnectionUtil.getConnection();
                 PreparedStatement ps = c.prepareStatement(sql);){
 
@@ -94,7 +97,7 @@ public class UserDaoImpli implements UserDao {
             if (amount < 0 || amount > user.getSavings()){
                 return false;
             }
-            String sql = "update user set savings = ?";
+            String sql = "update users set savings = ?";
             try(Connection c = ConnectionUtil.getConnection();
                 PreparedStatement ps = c.prepareStatement(sql);){
 
@@ -120,7 +123,7 @@ public class UserDaoImpli implements UserDao {
     }
 
     public User getByUserAndPass(String email, String pass){
-        String sql = "select * from user where email = ? and password = ?";
+        String sql = "select * from users where email = ? and password = ?";
         try(Connection c = ConnectionUtil.getConnection();
             PreparedStatement ps = c.prepareStatement(sql)) {
 
@@ -152,7 +155,7 @@ public class UserDaoImpli implements UserDao {
     }
 
     public List<User> getAll() {
-        String sql = "select * from user";
+        String sql = "select * from users";
         List<User> users = new ArrayList<>();
 
         try (Connection c = ConnectionUtil.getConnection();
@@ -181,7 +184,7 @@ public class UserDaoImpli implements UserDao {
     }
 
     public User getByUserId(int id) {
-        String sql = "select * from user where id = ? ";
+        String sql = "select * from users where id = ? ";
         try (Connection c = ConnectionUtil.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)){
 
@@ -210,7 +213,7 @@ public class UserDaoImpli implements UserDao {
     }
 
     public boolean updateUser(User user) {
-        String sql = "update user set type = ?, firstname = ?, lastname = ?, email = ?, password = ? where id = ?";
+        String sql = "update users set type = ?, firstname = ?, lastname = ?, email = ?, password = ? where id = ?";
 
         try(Connection c = ConnectionUtil.getConnection();
             PreparedStatement ps = c.prepareStatement(sql)){

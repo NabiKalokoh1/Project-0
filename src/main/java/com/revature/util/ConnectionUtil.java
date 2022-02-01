@@ -12,9 +12,9 @@ public class ConnectionUtil {
             e.printStackTrace();
         }
 
-        String url = "jdbc:postgresql://23.236.57.74:5432/project0";
-        String username = System.getenv("DB_USER");
-        String password = System.getenv("DB_PASS");
+        String url = "jdbc:postgresql://23.236.57.74:5432/bank";
+        String username = "project";//System.getenv("DB_USER");
+        String password = "nabiatu1";//System.getenv("DB_PASS");
         return DriverManager.getConnection(url, username, password);
     }
 }

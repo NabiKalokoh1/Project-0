@@ -38,4 +38,8 @@ public class UserService {
     public User getByUserAndPass(String email, String pass){
         return userDao.getByUserAndPass(email, pass);
     }
+
+    public boolean deposit(User user, int account){
+        return userDao.deposit(user, account);
+    }
 }

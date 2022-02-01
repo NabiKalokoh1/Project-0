@@ -38,7 +38,7 @@ public class User {
         //can't be a negative number (validation should be done before entering the method for all cases, yeah?
         //have a validation message
         if (balance == 1){
-            user.checking += amount;
+            user.setChecking(user.getChecking() + amount);
             System.out.println("You have deposited $" + amount + " into your checking account.");
         }
         if (balance == 2){
@@ -46,7 +46,7 @@ public class User {
             System.out.println("You have deposited $" + amount + " into your savings account.");
         }
 
-        return user.checking;
+        return user.getChecking();
 
 
     }
