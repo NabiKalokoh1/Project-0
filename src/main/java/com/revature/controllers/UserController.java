@@ -1,5 +1,8 @@
 package com.revature.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.models.User;
 import com.revature.services.UserService;
 import io.javalin.http.Context;
@@ -49,33 +52,97 @@ public class UserController {
     }
 
     public void handleDeleteUser(Context ctx){
-        //only Admins can do this
-        ctx.status(404);
-    }
-
-    //handle deposit, withdrawl, transfer still
-    public boolean handleDeposit(Context ctx){
         String idPara = ctx.pathParam("id");
         int id = Integer.parseInt(idPara);
         User user = ctx.bodyAsClass(User.class);
         user.setUserId(id);
-        String accountPara = ctx.pathParam("account");
-        int account = Integer.parseInt(accountPara);
-        boolean success = userService.deposit(user, account);
+        boolean success = userService.delete(user, id);
 
         if (success){
-            ctx.status(201);
+            ctx.status(200);
         } else{
-            ctx.status(400);
+            ctx.status(404);
         }
+    }
+
+    //handle deposit, withdraw, transfer
+    public boolean handleDeposit(Context ctx){
+        ObjectMapper mapper = new ObjectMapper();
+        String idPara = ctx.pathParam("id");
+        int id = Integer.parseInt(idPara);
+        User user = userService.getByUserId(id);
+        String accountPara = ctx.pathParam("account");
+        int account = Integer.parseInt(accountPara);
+        deposit d;
+        try {
+            d = mapper.readValue(ctx.body(),deposit.class);
+            boolean success = userService.deposit(user, id, Double.parseDouble(d.amount), account);
+
+            if (success){
+                ctx.status(201);
+            } else{
+                ctx.status(400);
+            }
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
         return false;
     }
 
     public boolean handleWithdraw(Context ctx){
+        ObjectMapper mapper = new ObjectMapper();
+        String idPara = ctx.pathParam("id");
+        int id = Integer.parseInt(idPara);
+        User user = userService.getByUserId(id);
+        String accountPara = ctx.pathParam("account");
+        int account = Integer.parseInt(accountPara);
+        deposit d;
+        try {
+            d = mapper.readValue(ctx.body(),deposit.class);
+            boolean success = userService.withdraw(user, id, Double.parseDouble(d.amount), account);
+
+            if (success){
+                ctx.status(201);
+            } else{
+                ctx.status(400);
+            }
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 
     public boolean handleTransfer(Context ctx){
+        ObjectMapper mapper = new ObjectMapper();
+        String idPara = ctx.pathParam("id");
+        int id = Integer.parseInt(idPara);
+        User user = userService.getByUserId(id);
+        String accountPara = ctx.pathParam("account");
+        int account = Integer.parseInt(accountPara);
+        deposit d;
+        try {
+            d = mapper.readValue(ctx.body(),deposit.class);
+            boolean success = userService.transfer(user, id, Double.parseDouble(d.amount), account);
+
+            if (success){
+                ctx.status(201);
+            } else{
+                ctx.status(400);
+            }
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
         return false;
     }
+}
+
+class deposit{
+    public String amount;
 }

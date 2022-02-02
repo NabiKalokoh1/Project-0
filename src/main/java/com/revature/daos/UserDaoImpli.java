@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoImpli implements UserDao {
-    public boolean createUser(User user){
+    public boolean createUser(User user) {
         String sql = "insert into users (type, firstName, lastName, email, password) values (?, ?, ?, ?, ?)";
 
-        try(Connection c = ConnectionUtil.getConnection();
-            PreparedStatement ps = c.prepareStatement(sql);){
+        try (Connection c = ConnectionUtil.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql);) {
 
             ps.setInt(1, user.getType().ordinal());
             ps.setString(2, user.getFirstName());
@@ -22,110 +22,123 @@ public class UserDaoImpli implements UserDao {
 
 
             int rowsAffected = ps.executeUpdate();
-            if (rowsAffected == 1){
+            if (rowsAffected == 1) {
                 return true;
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    public boolean deposit(User user, int account){
-        if(account == 1) {
-            String sql = "update users set checking = ?";
-            try(Connection c = ConnectionUtil.getConnection();
-                PreparedStatement ps = c.prepareStatement(sql);){
+    public boolean deposit(User user, int id, int account) {
+        if (account == 1) {
+            String sql = "update users set checking = ? where id = ?";
+            try (Connection c = ConnectionUtil.getConnection();
+                 PreparedStatement ps = c.prepareStatement(sql);) {
 
-                System.out.println(user.getChecking());
-                user.setChecking(user.deposit(user, user.getChecking(), account));
-                System.out.println(user.getChecking());
+                //check if the amount inputted is negative
+
                 ps.setDouble(1, user.getChecking());
+                ps.setInt(2, id);
+
 
                 int rowsAffected = ps.executeUpdate();
 
-                if (rowsAffected == 1){
+                if (rowsAffected == 1) {
                     return true;
                 }
-            } catch (SQLException e){
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
             return false;
-        }else if (account == 2){
-            String sql = "update users set savings = ?";
-            try(Connection c = ConnectionUtil.getConnection();
-                PreparedStatement ps = c.prepareStatement(sql);){
+        } else if (account == 2) {
+            String sql = "update users set savings = ? where id = ?";
+            try (Connection c = ConnectionUtil.getConnection();
+                 PreparedStatement ps = c.prepareStatement(sql);) {
 
-               // user.setChecking(user.deposit(user, account));
                 ps.setDouble(1, user.getSavings());
+                ps.setInt(2, id);
 
                 int rowsAffected = ps.executeUpdate();
-                if (rowsAffected == 1){
+
+                if (rowsAffected == 1) {
                     return true;
                 }
-            } catch (SQLException e){
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
-        } else{
+        } else {
             return false;
         }
         return false;
 
     }
 
-    public boolean withdraw(User user, int amount, int account){
-        if(account == 1) {
-            if (amount < 0 || amount > user.getChecking()){
-                return false;
-            }
-            String sql = "update users set checking = ?";
-            try(Connection c = ConnectionUtil.getConnection();
-                PreparedStatement ps = c.prepareStatement(sql);){
+    public boolean withdraw(User user, int id, int account) {
+        if (account == 1) {
+            String sql = "update users set checking = ? where id = ?";
+            try (Connection c = ConnectionUtil.getConnection();
+                 PreparedStatement ps = c.prepareStatement(sql);) {
 
-                user.setChecking(user.withdraw(user, amount, account));
+                //check if the amount inputted is more than available or negative
+
                 ps.setDouble(1, user.getChecking());
+                ps.setInt(2, id);
+
 
                 int rowsAffected = ps.executeUpdate();
-                if (rowsAffected == 1){
+
+                if (rowsAffected == 1) {
                     return true;
                 }
-            } catch (SQLException e){
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
             return false;
-        }else if (account == 2){
-            if (amount < 0 || amount > user.getSavings()){
-                return false;
-            }
-            String sql = "update users set savings = ?";
-            try(Connection c = ConnectionUtil.getConnection();
-                PreparedStatement ps = c.prepareStatement(sql);){
+        } else if (account == 2) {
+            String sql = "update users set savings = ? where id = ?";
+            try (Connection c = ConnectionUtil.getConnection();
+                 PreparedStatement ps = c.prepareStatement(sql);) {
 
-                user.setChecking(user.withdraw(user, amount, account));
                 ps.setDouble(1, user.getSavings());
+                ps.setInt(2, id);
 
                 int rowsAffected = ps.executeUpdate();
-                if (rowsAffected == 1){
+
+                if (rowsAffected == 1) {
                     return true;
                 }
-            } catch (SQLException e){
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
-        } else{
+        } else {
             return false;
         }
         return false;
-
     }
 
-    public boolean transfer(User user, int amount, int order){
-        return false;
+    public boolean transfer(User user, int id, int order) {
+        if (order == 1) {
+            boolean check = this.withdraw(user,id,1);
+            if (!check){
+                return false;
+            }
+            this.deposit(user,id,2);
+        } else if (order == 2) {
+            boolean check = this.withdraw(user, id, 2);
+            if (!check){
+                return false;
+            }
+            this.deposit(user, id, 1);
+        }
+        return true;
     }
 
-    public User getByUserAndPass(String email, String pass){
+    public User getByUserAndPass(String email, String pass) {
         String sql = "select * from users where email = ? and password = ?";
-        try(Connection c = ConnectionUtil.getConnection();
-            PreparedStatement ps = c.prepareStatement(sql)) {
+        try (Connection c = ConnectionUtil.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setString(1, email);
             ps.setString(2, pass);
@@ -144,11 +157,13 @@ public class UserDaoImpli implements UserDao {
                 user.setLastName(rs.getString("lastname"));
                 user.setEmail(rs.getString("email"));
                 user.setPassword(rs.getString("password"));
+                user.setChecking(rs.getDouble("checking"));
+                user.setSavings(rs.getDouble("savings"));
 
                 return user;
             }
 
-        } catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
@@ -159,10 +174,10 @@ public class UserDaoImpli implements UserDao {
         List<User> users = new ArrayList<>();
 
         try (Connection c = ConnectionUtil.getConnection();
-            Statement s = c.createStatement();){
+             Statement s = c.createStatement();) {
             ResultSet rs = s.executeQuery(sql);
 
-            while(rs.next()) {
+            while (rs.next()) {
                 User user = new User();
                 int id = rs.getInt("id");
                 user.setUserId(id);
@@ -174,6 +189,8 @@ public class UserDaoImpli implements UserDao {
                 user.setLastName(rs.getString("lastname"));
                 user.setEmail(rs.getString("email"));
                 user.setPassword(rs.getString("password"));
+                user.setChecking(rs.getDouble("checking"));
+                user.setSavings(rs.getDouble("savings"));
                 users.add(user);
             }
         } catch (SQLException e) {
@@ -186,13 +203,13 @@ public class UserDaoImpli implements UserDao {
     public User getByUserId(int id) {
         String sql = "select * from users where id = ? ";
         try (Connection c = ConnectionUtil.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql)){
+             PreparedStatement ps = c.prepareStatement(sql)) {
 
-            ps.setInt(1,id);
+            ps.setInt(1, id);
 
             ResultSet rs = ps.executeQuery();
 
-            if (rs.next()){
+            if (rs.next()) {
                 User user = new User();
                 user.setUserId(id);
 
@@ -204,9 +221,12 @@ public class UserDaoImpli implements UserDao {
                 user.setLastName(rs.getString("lastname"));
                 user.setEmail(rs.getString("email"));
                 user.setPassword(rs.getString("password"));
+                user.setChecking(rs.getDouble("checking"));
+                user.setSavings(rs.getDouble("savings"));
+
                 return user;
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
@@ -215,8 +235,8 @@ public class UserDaoImpli implements UserDao {
     public boolean updateUser(User user) {
         String sql = "update users set type = ?, firstname = ?, lastname = ?, email = ?, password = ? where id = ?";
 
-        try(Connection c = ConnectionUtil.getConnection();
-            PreparedStatement ps = c.prepareStatement(sql)){
+        try (Connection c = ConnectionUtil.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setInt(1, user.getType().ordinal());
             ps.setString(2, user.getFirstName());
@@ -224,6 +244,25 @@ public class UserDaoImpli implements UserDao {
             ps.setString(4, user.getEmail());
             ps.setString(5, user.getPassword());
             ps.setInt(6, user.getUserId());
+
+            int rowsAffected = ps.executeUpdate();
+
+            if (rowsAffected == 1) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    public boolean deleteUser(User user, int id) {
+        String sql = "delete from users where id = ?";
+        try(Connection c = ConnectionUtil.getConnection();
+            PreparedStatement ps = c.prepareStatement(sql)){
+
+            ps.setInt(1, id);
 
             int rowsAffected = ps.executeUpdate();
 
@@ -235,5 +274,4 @@ public class UserDaoImpli implements UserDao {
         }
         return false;
     }
-
 }

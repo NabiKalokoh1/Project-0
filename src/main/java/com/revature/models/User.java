@@ -8,8 +8,8 @@ public class User {
     private String lastName;
     private String email;
     private String password;
-    private double checking = 0.0;
-    private double savings = 0.0;
+    private double checking;
+    private double savings;
 
     public User() {
     }
@@ -31,78 +31,14 @@ public class User {
         this.password = password;
     }
 
-    //will probably move these somewhere else
-    public double deposit(User user, double amount, int balance){
-        //input where to deposit and how much
-        //must be User
-        //can't be a negative number (validation should be done before entering the method for all cases, yeah?
-        //have a validation message
-        if (balance == 1){
-            user.setChecking(user.getChecking() + amount);
-            System.out.println("You have deposited $" + amount + " into your checking account.");
-        }
-        if (balance == 2){
-            user.savings += amount;
-            System.out.println("You have deposited $" + amount + " into your savings account.");
-        }
 
-        return user.getChecking();
-
-
-    }
-
-    public double withdraw(User user, double amount, int balance){
-        //input where to withdraw and how much
-        //must be User
-        //can't be a negative number
-        //can't take more than what's available
-        //have a validation message
-        if (balance == 1){
-            if (user.checking < amount){
-                System.out.println("You don't have enough money in this account.");
-                return user.checking;
-            }
-            user.checking -= amount;
-            System.out.println("You have withdrawn $" + amount + " from your checking account.");
-        }
-        if (balance == 2){
-            if (user.savings < amount){
-                System.out.println("You don't have enough money in this account.");
-                return user.savings;
-            }
-            user.savings -= amount;
-            System.out.println("You have withdrawn $" + amount + " from your savings account.");
-        }
-
-        return user.savings;
-    }
-
-    public void transfer(User user, int amount, int order){
-        //input both checking and savings, a flag for which to take/give to, and how much
-        //must be user or admin
-        //can't be a negative number
-        //can't take more than what's available
-        //have a validation message
-        if (order == 1){
-            //checking to savings
-            user.withdraw(user, amount, 1);
-            user.deposit(user, amount, 2);
-        }
-
-        if (order == 2){
-            //savings to checking
-            user.withdraw(user, amount, 2);
-            user.deposit(user, amount, 1);
-        }
-    }
-
-    public String accountInfo(User user){
+    public String toString(){
         return "Account Information\n" +
-                "Full Name: " + user.firstName + " " + user.lastName + "\n" +
-                "E-mail: " + user.email + "\n" +
-                "Password: " + user.password + "\n" +
-                "Checking Balance: " + user.checking + "\n" +
-                "Savings Balance: " + user.savings;
+                "Full Name: " + this.firstName + " " + this.lastName + "\n" +
+                "E-mail: " + this.email + "\n" +
+                "Password: " + this.password + "\n" +
+                "Checking Balance: " + this.checking + "\n" +
+                "Savings Balance: " + this.savings;
     }
 
     //getters and setters

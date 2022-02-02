@@ -19,8 +19,8 @@ public class JavalinApplication {
         path("user",()->{
             post(userController::handleCreateUser);
             get(userController::handleAllUsers);
-            delete(userController::handleDeleteUser);
             path("{id}", ()->{
+                delete(userController::handleDeleteUser);
                 get(userController::handleOneUser);
                 put(userController::handleUpdateUser);
                 path("deposit", ()->{
@@ -44,7 +44,7 @@ public class JavalinApplication {
         path("login", ()->{
             post(authController::authenticate);
         });
-        //before("*", loggingUtil::logRequest);
+        before("*", loggingUtil::logRequest);
     }).exception(NumberFormatException.class, appExceptionHandler::handleNumberFormatException);
 
     public void start(int port){
